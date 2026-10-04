@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'event_registration_page.dart';
 import '../../models/event.dart';
 
 class EventDetailsPage extends StatefulWidget {
@@ -36,11 +37,22 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
               child: ElevatedButton(
                 onPressed: registered
                     ? null
-                    : () {
-                        setState(() => registered = true);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Registered successfully!')),
+                    : () async {
+                        final result = await Navigator.push<bool>(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                EventRegistrationPage(event: event),
+                          ),
                         );
+                        if (result == true) {
+                          setState(() => registered = true);
+                          if (!context.mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Registered successfully!')),
+                          );
+                        }
                       },
                 child: Text(registered ? 'Registered ✅' : 'Register'),
               ),
